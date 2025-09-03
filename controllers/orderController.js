@@ -71,7 +71,6 @@ export const getUserOrders = async (req, res) => {
         message: "Unauthorized: No user ID found",
       });
     }
-
     const orders = await orderModel.find({ userId }).sort({ time: -1 });
     res.status(200).json({
       success: true,

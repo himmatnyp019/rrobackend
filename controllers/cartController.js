@@ -3,22 +3,23 @@ import userModel from '../models/userModels.js'
 
 //add items to user's cart
 const addToCart = async (req, res) => {
-    try {
-        let userData = await userModel.findOne({ _id: req.userId });
-        let cartData = userData.cartData;
+  try {
+    let userId = req.userId;
+    let userData = await userModel.findOne({ _id: userId });
+    let cartData = userData.cartData;
 
-        if (!cartData[req.body.itemId]) {
-            cartData[req.body.itemId] = 1;
-        } else {
-            cartData[req.body.itemId] += 1;
-        }
-
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData }); 
-        res.json({ success: true, message: "Added to Cart." });
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: "Failed to add item in cart. Try again. " + error });
+    if (!cartData[req.body.itemId]) {
+      cartData[req.body.itemId] = 1;
+    } else {
+      cartData[req.body.itemId] += 1;
     }
+
+    await userModel.findByIdAndUpdate(req.userId, { cartData });
+    res.json({ success: true, message: "Added to Cart." });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Failed to add item in cart. Try again. " + error });
+  }
 };
 
 //remove items from user's cart
@@ -41,7 +42,7 @@ const removeFromCart = async (req, res) => {
 
     let cartData = await user.cartData; //2
 
-    if (!cartData[itemId]) {  
+    if (!cartData[itemId]) {
       return res.json({ success: false, message: "Item not in cart." });
     }
 
@@ -51,9 +52,9 @@ const removeFromCart = async (req, res) => {
       delete cartData[itemId];
     }
 
-    await userModel.findByIdAndUpdate(userId, {cartData});
+    await userModel.findByIdAndUpdate(userId, { cartData });
     res.json({ success: true, message: "Item updated in cart." });
-    
+
   } catch (error) {
     console.error("removeFromCart error:", error);
     res.status(500).json({ success: false, message: "Failed to remove item. " + error });
